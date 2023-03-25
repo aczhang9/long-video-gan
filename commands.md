@@ -1,5 +1,5 @@
 First, a Docker warning:  
-**DO NOT CTRL-C TO STOP A PROCESS IN A DOCKER CONTAINER**
+**DO NOT CTRL-C TO STOP A PROCESS IN A DOCKER CONTAINER**  
 To gracefully stop a process in a Docker container, open a new terminal and run the following commands:
 ```
 $ sudo docker ps # get the id of the running container
