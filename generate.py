@@ -23,7 +23,7 @@ import utils
 @click.option("--sres", "sres_path", help="Super-res network pickle path/URL", type=str)
 @click.option("--len", "seq_length", help="Video length in frames", type=int, default=301)
 @click.option("--save-lres", help="Whether to also save the low res video", type=bool, default=False)
-@click.option("--save-index", "-i", "save_frame_indices", help="Frame indices to save as images", default=[], type=int, multiple=True)  # fmt: skip
+#@click.option("--save-index", "-i", "save_frame_indices", help="Frame indices to save as images", default=[], type=int, multiple=True)  # fmt: skip
 def generate(
     outdir: str,
     seed: int,
@@ -31,7 +31,7 @@ def generate(
     sres_path: str,
     seq_length: int,
     save_lres: bool,
-    save_frame_indices: list[int],
+    #save_frame_indices: list[int],
 ):
     """Generate videos using pretrained model pickles.
     Examples:
@@ -73,12 +73,12 @@ def generate(
         print(f"Saving high-resolution video: {path}")
         utils.write_video_grid(video, path)
 
-        if len(save_frame_indices) > 0:
-            print(f"Saving frame images: {pathlib.Path(outdir, f'seed={seed}_len={seq_length}_frame=*.png')}")
-        for i in save_frame_indices:
-            utils.save_image_grid(
-                video[:, :, i], pathlib.Path(outdir, f"seed={seed}_len={seq_length}_frame={i:04d}.png")
-            )
+        #if len(save_frame_indices) > 0:
+        #    print(f"Saving frame images: {pathlib.Path(outdir, f'seed={seed}_len={seq_length}_frame=*.png')}")
+        #for i in save_frame_indices:
+        #    utils.save_image_grid(
+        #        video[:, :, i], pathlib.Path(outdir, f"seed={seed}_len={seq_length}_frame={i:04d}.png")
+        #    )
 
         lr_video = lr_video[:, :, sres_G.temporal_context : sres_G.temporal_context + seq_length]
 
