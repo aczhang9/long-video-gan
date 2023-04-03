@@ -93,7 +93,7 @@ wandb: wandb sync runs/lres/00000-horseback-8batch-4accum-1.0gamma/wandb/offline
 wandb: Find logs at: runs/lres/00000-horseback-8batch-4accum-1.0gamma/wandb/offline-run-20230325_170700-h9fgki91/logs
 ```
 
-# Make dataset from video clips
+# Make dataset from YouTube videos
 1. Activate long-video-gan `conda` environment:
 ```
 conda activate
@@ -105,6 +105,30 @@ conda activate long-video-gan
 python -m dataset_tools.make_dataset_from_youtube dataset_tools/youtube_configs/horseback.json datasets/horseback_test video_cache/horseback_test
 ```
 The script by default generates datasets with frames of 144x256 size.
+
+# Make dataset from downloaded videos
+1. Download part of YouTube video (start and end times in seconds):
+```
+$ conda activate long-video-gan
+$ yt-dlp --download-sections "*<start_time>-<end_time>" https://www.youtube.com/watch?v=LjCzPp-MK48&ab_channel=NationalGeographic
+```
+For example: download first 170 seconds of video
+```
+$ yt-dlp --download-sections "*0-170" https://www.youtube.com/watch?v=LjCzPp-MK48&ab_channel=NationalGeographic
+```
+2. Convert downloaded file in `.webm` format to `mp4`.
+For example:
+```
+$ ffmpeg -i <filename>.webm -max_muxing_queue_size 1024 <filename>.mp4
+```
+3. Convert video to dataset frames. The script will look for `.mp4` files in `SOURCE_VIDEOS_DIR`.
+For example: convert video between seconds 34-42 into frames (170-128=42)
+```
+$ python -m dataset_tools.make_dataset_from_videos SOURCE_VIDEOS_DIR OUTPUT_DATASET_DIR --height=144 --width=256 --partition=0 --num-partitions=1 --trim-start=<seconds_to_remove_from_start_of_clip> --trim-end=<seconds_to_remove_from_end_of_clip>
+```
+```
+$ python -m dataset_tools.make_dataset_from_videos video_cache/flower/ datasets/flower/ --height=144 --width=256 --partition=0 --num-partitions=1 --trim-start=34 --trim-end=128 
+```
 
 ## Copy files from server to local machine
 On your **local machine**, run the following command:
