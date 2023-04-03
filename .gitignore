@@ -1,0 +1,6 @@
+.cache
+datasets/
+dataset_tools/__pycache__
+outputs/
+runs/
+video_cache/
