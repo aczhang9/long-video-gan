@@ -2,7 +2,7 @@ from PIL import Image, ImageSequence
 import os
 
 im = Image.open("teaser_horseback.gif")
-outdir = "datasets/trial/folder1"
+outdir = "datasets/test/folder1"
 
 index = 1
 for frame in ImageSequence.Iterator(im):

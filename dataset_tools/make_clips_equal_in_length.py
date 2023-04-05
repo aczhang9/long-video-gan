@@ -1,10 +1,11 @@
 import os
 import re
+import numpy as np
 import click
 
-def interleave2gif(datasetpath, ilfactor):
+def interleave2gif(datasetpath, cliplength):
   # datasetpath = training/testing folder which has a subset for each "video clip" that is represented as separate frames
-  # ilfactor    = pick 1 frame every 'ilfactor' frames
+  # cliplength  = pick a frame every x frames such that new clip has roughly "cliplength" frames
   
   filelist = sorted(os.listdir(datasetpath))
   clipfolderlist = [os.path.join(datasetpath, x) for x in filelist if os.path.isdir(os.path.join(datasetpath, x))]
@@ -14,15 +15,17 @@ def interleave2gif(datasetpath, ilfactor):
     cliptimestamplist = [os.path.join(clipfolder, x) for x in filelist if os.path.isdir(os.path.join(clipfolder, x))]
 
     for cliptimestamp in cliptimestamplist:
-        # Create new folders
-        for j in range(ilfactor):
-            newdir = cliptimestamp+f"_{j+1:04d}"
-            assert not os.path.isdir(newdir), f"The folder you wanted to create ({newdir:s}) already exists"
-            os.mkdir(newdir)
-
         # Get list of frames for current time interval for current video clip
         imgs = sorted(os.listdir(cliptimestamp))
         framenums = [int(re.findall(r'\d+', x)[0]) for x in imgs]
+        
+        ilfactor = int(np.floor(len(imgs)/cliplength))
+
+        # Create new folders
+        for j in range(ilfactor):
+            newdir = cliptimestamp+f"_{j+1:04d}"
+            assert not os.path.isdir(newdir), f"The folder we wanted to create ({newdir:s}) already exists"
+            os.mkdir(newdir)
 
         # Move frames
         for j in range(len(imgs)):
@@ -40,19 +43,19 @@ def interleave2gif(datasetpath, ilfactor):
 
 @click.command()
 @click.option("--dataset", "-d", "dataset_dir", help="Path to dataset directory", type=str, required=True, multiple=False)
-@click.option("--ilfactor", "-i", "ilfactor", help="Interleaving factor", default=8, type=int, multiple=False)
+@click.option("--cliplength", "-c", "cliplength", help="Interleaving factor", default=10, type=int, multiple=False)
 def main(
     dataset_dir: str,
-    ilfactor: int,
+    cliplength: int,
 ):
     """Split a video clipfolder from dataset into multiple clips
     Example:
 
     \b
     # Split the each video clips in horseback dataset into eight video clips
-    python interleave_frames.py -d datasets/test -i 8
+    python interleave_frames.py -d datasets/trial -c 10
     """
-    interleave2gif(dataset_dir, ilfactor)
+    interleave2gif(dataset_dir, cliplength)
 
 ###########################################################################################################
 
