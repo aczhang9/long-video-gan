@@ -126,6 +126,14 @@ For example: convert video between seconds 34-42 into frames (170-128=42)
 ```
 $ python -m dataset_tools.make_dataset_from_videos SOURCE_VIDEOS_DIR OUTPUT_DATASET_DIR --height=144 --width=256 --partition=0 --num-partitions=1 --trim-start=<seconds_to_remove_from_start_of_clip> --trim-end=<seconds_to_remove_from_end_of_clip>
 ```
+4. Interleave the video clips into new folders that will have about 16 frames each. This command is run from the folder long-video-gan-az
+```
+python dataset_tools/make_clips_equal_in_length.py -d datasets/flower/0144x0256 -c 16
+```
+If you want to just blindly select 1 in every 8th frame, for example, without worrying about the clip length, run:
+```
+python dataset_tools/interleave_frames.py -d datasets/flower/0144x0256 -i 8
+```
 ```
 $ python -m dataset_tools.make_dataset_from_videos video_cache/flower/ datasets/flower/ --height=144 --width=256 --partition=0 --num-partitions=1 --trim-start=34 --trim-end=128 
 ```
