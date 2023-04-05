@@ -158,7 +158,7 @@ def train(
                     stats_jsonl_fp.write(f"{json.dumps(dict(stats, timestamp=time.time()))}\n")
                     stats_jsonl_fp.flush()
                     stats = {name: value.mean for name, value in stats.items()}
-                    wandb.log(stats, step=step)
+                    #wandb.log(stats, step=step)
 
             if tick % ticks_per_G_ema_ckpt == 0:
                 # Prints summaries of network architectures.
@@ -190,7 +190,7 @@ def train(
                 # Evaluates metrics.
                 if len(metrics) > 0:
                     utils.print0(f"Evaluating metrics...")
-                    wandb_results = dict()
+                    #wandb_results = dict()
                     # Default sequence length of 1 is overwritten by video metrics.
                     dataset_kwargs = dict(dataset_dir=dataset_dir, seq_length=1, height=height, width=width)
                     metric_kwargs["replace_cache"] = metric_kwargs.get("replace_cache", False) and step == 0
@@ -203,10 +203,10 @@ def train(
                             print(json_line)
                             with open(Path(run_dir, f"metric-{metric}.jsonl"), "at") as fp:
                                 fp.write(f"{json_line}\n")
-                            for name, value in result_dict.results.items():
-                                wandb_results[f"metric/{name}"] = value
-                    if rank == 0:
-                        wandb.log(wandb_results, step=step, commit=True)
+                            #for name, value in result_dict.results.items():
+                                #wandb_results[f"metric/{name}"] = value
+                    #if rank == 0:
+                        #wandb.log(wandb_results, step=step, commit=True)
                 del G_ema_ckpt
 
             tick_start_time = time.time()
@@ -341,13 +341,13 @@ def main(
                 json.dump(c, fp, indent=2)
 
             # Initializes W&B.
-            wandb.init(
-                dir=c.run_dir,
-                name=Path(c.run_dir).name,
-                project="long-video-gan-lres",
-                config=c,
-                settings=wandb.Settings(start_method="spawn"),
-            )
+            #wandb.init(
+            #    dir=c.run_dir,
+            #    name=Path(c.run_dir).name,
+            #    project="long-video-gan-lres",
+            #    config=c,
+            #    settings=wandb.Settings(start_method="spawn"),
+            #)
 
         train(**c)
 
