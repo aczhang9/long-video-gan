@@ -90,7 +90,9 @@ def train(
         samples_dir.mkdir()
 
     with utils.context_timer0("Loading video dataset"):
+        # print('**',dataset_dir, result_seq_length, seq_length, height, width, x_flip,'**', sep='\n', end='\n')
         result_dataset = VideoDataset(dataset_dir, result_seq_length, height, width, x_flip=x_flip)
+        print(result_dataset.min_video_length, len(result_dataset), sep='\n')
         dataset = VideoDataset(dataset_dir, seq_length, height, width, x_flip=x_flip)
         data_iter = utils.get_infinite_data_iter(
             dataset, batch_size=batch_per_gpu, seed=utils.random_seed(), **loader_kwargs
@@ -98,6 +100,7 @@ def train(
 
     with utils.context_timer0("Saving real videos"):
         generator = torch.Generator().manual_seed(seed_per_gpu)
+        # print('**',len(result_dataset),'**')
         index = torch.randint(len(result_dataset) // world_size, (), generator=generator).item()
         index += rank * (len(result_dataset) // world_size)
         video = result_dataset[index]["video"][None].cuda()
@@ -259,7 +262,7 @@ def main(
     c = EasyDict(
         run_dir=None,
         dataset_dir=dataset_dir,
-        seq_length=128,
+        seq_length=16,
         height=36,
         width=64,
         x_flip=True,
@@ -268,11 +271,11 @@ def main(
         allow_fp16_reduce=False,
         allow_tf32=False,
         start_step=0,
-        total_steps=1,
+        total_steps=10000,
         steps_per_tick=500,
         ticks_per_G_ema_ckpt=10,
-        ticks_per_train_ckpt=100,
-        result_seq_length=256,
+        ticks_per_train_ckpt=10,
+        result_seq_length=16,
         r1_interval=16,
         total_batch=total_batch,
         metrics=metrics,
