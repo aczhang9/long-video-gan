@@ -116,16 +116,15 @@ For example: download first 170 seconds of video
 ```
 $ yt-dlp --download-sections "*0-170" https://www.youtube.com/watch?v=LjCzPp-MK48&ab_channel=NationalGeographic
 ```
-2. Convert downloaded file in `.webm` format to `mp4`.
-For example:
+
+2. Put desired timestamps of video clips into json file in `dataset_tools/youtube_configs`.
+
+3. Run `make_dataset_from_youtube` script. Set the directory used for caching YouTube videos argument to point to where the YouTube videos were downloaded. The script should not re-download the youtube since we already downloaded the video in step 1.
 ```
-$ ffmpeg -i <filename>.webm -max_muxing_queue_size 1024 <filename>.mp4
+python -m dataset_tools.make_dataset_from_youtube dataset_tools/youtube_configs/flower.json datasets/flower video_cache/flower --height=36 --width=64 --partition=0 --num-partitions=1
+
 ```
-3. Convert video to dataset frames. The script will look for `.mp4` files in `SOURCE_VIDEOS_DIR`.
-For example: convert video between seconds 34-42 into frames (170-128=42)
-```
-$ python -m dataset_tools.make_dataset_from_videos SOURCE_VIDEOS_DIR OUTPUT_DATASET_DIR --height=144 --width=256 --partition=0 --num-partitions=1 --trim-start=<seconds_to_remove_from_start_of_clip> --trim-end=<seconds_to_remove_from_end_of_clip>
-```
+
 4. Interleave the video clips into new folders that will have about 16 frames each. This command is run from the folder long-video-gan-az
 ```
 python dataset_tools/make_clips_equal_in_length.py -d datasets/flower/0144x0256 -c 16
