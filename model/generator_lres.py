@@ -670,6 +670,8 @@ class VideoGenerator(nn.Module):
         # fmt: off
         heights = [math.ceil(self.out_height / scale) + 2 * self.spatial_padding for scale in scales]
         widths = [math.ceil(self.out_width / scale) + 2 * self.spatial_padding for scale in scales]
+        print("heights: ", heights[0], heights[1], "widths: ", widths[0], widths[1])
+
         t_kwargs = dict(spatial_ksize=self.spatial_ksize, temporal_ksize=self.temporal_ksize)
         s_kwargs = dict(spatial_ksize=self.spatial_ksize)
         self.temporal_layers = nn.ModuleList([

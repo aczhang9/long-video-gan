@@ -271,7 +271,7 @@ def main(
         allow_fp16_reduce=False,
         allow_tf32=False,
         start_step=0,
-        total_steps=10000,
+        total_steps=100000,
         steps_per_tick=500,
         ticks_per_G_ema_ckpt=10,
         ticks_per_train_ckpt=10,
