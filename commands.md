@@ -22,6 +22,13 @@ Saving low-resolution video: outputs/horseback/seed=49_len=301_lres.mp4
 Enjoy!
 ```
 
+### Generate videos from trained models
+In `~git/long-video-gan`:
+```
+sudo docker run --gpus '"device=1"' -it --rm --user $(id -u):$(id -g)     -v `pwd`:/scratch --workdir /scratch -e HOME=/scratch     long-video-gan python generate.py --outdir=outputs/flower_towards_camera --seed=1 --save-lres=True --lres=runs/lres/00020-flower_towards_camera_y_flipped-4batch-4accum-1.0gamma/checkpoints/ckpt-00065000-G-ema.pkl --sres=runs/sres/00000-flower_towards_camera_y_flipped-2batch-2accum-1.0gamma/checkpoints/ckpt-00070000-G-ema.pkl --len=16
+```
+Pick the `lres` and `sres` checkpoint models you want to use to generate the model.
+
 # Download horseback/biking datasets as .zip for training
 Navigate to where you want to save the dataset (probbaly somewhere in `datasets/`) and run the following command:
 ```
@@ -92,6 +99,19 @@ wandb: You can sync this run to the cloud by running:
 wandb: wandb sync runs/lres/00000-horseback-8batch-4accum-1.0gamma/wandb/offline-run-20230325_170700-h9fgki91
 wandb: Find logs at: runs/lres/00000-horseback-8batch-4accum-1.0gamma/wandb/offline-run-20230325_170700-h9fgki91/logs
 ```
+
+### Training on our dataset
+Run these commands in the `~/git/long-video-gan` folder:  
+Low resolution model training:
+```
+sudo docker run --gpus '"device=1"' -it --rm --user $(id -u):$(id -g)     -v `pwd`:/scratch --workdir /scratch -e HOME=/scratch     long-video-gan python -m torch.distributed.run --nnodes=1 --nproc_per_node=1 train_lres.py --outdir=runs/lres --dataset=datasets/flower_towards_camera_y_flipped --batch=4 --grad-accum=4 --gamma=1.0
+```
+
+High resolution model training:
+```
+sudo docker run --gpus '"device=1"' -it --rm --user $(id -u):$(id -g)     -v `pwd`:/scratch --workdir /scratch -e HOME=/scratch     long-video-gan python -m torch.distributed.run --nnodes=1 --nproc_per_node=1 train_sres.py --outdir=runs/sres --dataset=datasets/flower_up_y_flipped --batch=2 --grad-accum=2 --gamma=1.0
+```
+If you're running on TACC, the `--batch` argument can probably be bigger and the `--grad-accum` argument can be smaller. These batch and grad-accum arguments are the best that can run without memory errorrs on my lab's GPU. Also, you can adjust the `--nnodes` and `nproc_per_node` on TACC but I'm not sure what their values should be.
 
 # Make dataset from YouTube videos
 1. Activate long-video-gan `conda` environment:
