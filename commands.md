@@ -143,3 +143,14 @@ On your **local machine**, run the following command:
 ```
 scp asvin@genesis.ece.utexas.edu:/path/to/file/on/server/ .
 ```
+
+## Calculate metrics:
+```
+$ python calc_metrics.py --dataset=datasets/flower_towards_camera_y_flipped -m fvd2048_16f --verbose=True     --lres=runs/lres/00020-flower_towards_camera_y_flipped-4batch-4accum-1.0gamma/checkpoints/ckpt-00090000-G-ema.pkl     --sres=runs/sres/00000-flower_towards_camera_y_flipped-2batch-2accum-1.0gamma/checkpoints/ckpt-00090000-G-ema.pkl --path=metrics.json
+
+$ python calc_metrics.py --dataset=datasets/flower_towards_camera_y_flipped -m fvd2048_16f --verbose=True \
+    --lres=runs/lres/00020-flower_towards_camera_y_flipped-4batch-4accum-1.0gamma/checkpoints/ckpt-00090000-G-ema.pkl \
+    --sres=runs/sres/00000-flower_towards_camera_y_flipped-2batch-2accum-1.0gamma/checkpoints/ckpt-00090000-G-ema.pkl --path=metrics.json
+```
+
+
